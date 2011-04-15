@@ -117,17 +117,59 @@ module.exports = {
     qs.parse('').should.eql({});
     qs.parse(undefined).should.eql({});
     qs.parse(null).should.eql({});
+  },
+
+    'test complex': function(){
+
+   // if no arrays are EVER specified, parser will create arrays for you
+	qs.parse('users[name][first]=tj&users[name][first]=tobi')
+      .should.eql({
+        users: { name: { first: [ 'tj', 'tobi' ] } }
+      });
+
+	// once an array is specified, objects that are parsed are PUSHED onto the array
+	qs.parse('users[][name][first]=tj&users[][name][first]=tobi')
+      .should.eql({
+        users: [ { name: { first: 'tj' } }, { name: { first: 'tobi' } } ]
+      });
+
+	// arrays can be specified within objects
+	qs.parse('users[name][][first]=tj&users[name][][first]=tobi')
+      .should.eql({
+        users: { name: [ { first: 'tj' }, { first: 'tobi' } ] }
+      });
+
+	// if you specify an array but want a deeper object to be pushed into a deeper array, you can specify that with []
+   qs.parse('users[][name][first][]=tj&users[][name][first][]=tobi')
+      .should.eql({
+        users: [ { name: { first: [ 'tj', 'tobi' ] } } ]
+      });
+
+	// you can continue adding to a deep object object
+	qs.parse('users[][name][first]=tj&users[][name][last]=holowaychuk')
+      .should.eql({
+        users: [ { name: { first: 'tj', last: 'holowaychuk' } } ]
+      });
+
+	// order matters, once a new object is pushed, you can't add anything back into the youngest object
+	qs.parse('users[][name][first]=tobi&users[][name][first]=tj&users[][name][last]=holowaychuk')
+      .should.eql({
+        users: [ { name: { first: 'tobi' } }, { name: { first: 'tj', last: 'holowaychuk' } } ]
+      });
+	},
+
+	'test deep': function(){
+
+		// deep objects should work
+		qs.parse('users[][name][first][nickname]=tj&users[][name][first][nickname]=tobi')
+   	   .should.eql({
+   	     users: [ { name: { first: { nickname: 'tj' } } }, { name: { first: { nickname: 'tobi' } } } ]
+   	   });
+
+		// deep objects should work	
+		qs.parse('users[][name][first][nickname][]=tj&users[][name][first][nickname][]=tobi')
+   	   .should.eql({
+   	     users: [ { name: { first: { nickname: [ 'tj', 'tobi' ] } } } ]
+   	   });
   }
-  
-  // 'test complex': function(){
-  //   qs.parse('users[][name][first]=tj&users[foo]=bar')
-  //     .should.eql({
-  //       users: [ { name: 'tj' }, { name: 'tobi' }, { foo: 'bar' }]
-  //     });
-  // 
-  //   qs.parse('users[][name][first]=tj&users[][name][first]=tobi')
-  //     .should.eql({
-  //       users: [ { name: 'tj' }, { name: 'tobi' }]
-  //     });
-  // }
 };
