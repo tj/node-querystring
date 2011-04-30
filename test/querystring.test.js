@@ -171,5 +171,13 @@ module.exports = {
    	   .should.eql({
    	     users: [ { name: { first: { nickname: [ 'tj', 'tobi' ] } } } ]
    	   });
+  },
+
+  'test deep complex': function() {
+	// deep objects should work
+   qs.parse('a[b][][c]=1&a[b][]=2&a[b][]=3&a[b][][d]=4')
+       .should.eql({
+          a: { b : [ { c: 1 }, 2, 3, { d: 4 } ] }
+     });
   }
 };
