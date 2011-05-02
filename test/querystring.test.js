@@ -179,5 +179,38 @@ module.exports = {
        .should.eql({
           a: { b : [ { c: 1 }, 2, 3, { d: 4 } ] }
      });
+  },
+
+  'indice types': function() {
+
+	// numbered indice starting with 0 or [] means we want an array
+   qs.parse('a[0]=1')
+       .should.eql({
+		 	a: [1]
+     }).obj.a.should.be.an.instanceof(Array);
+
+	// without [0] or [], means we want an object
+   qs.parse('a[1]=2')
+       .should.eql({
+		 	a: { 1: 2 }
+     }).obj.a.should.be.a('object');
+
+   // [] triggers the array creation, no matter what, it will push from last indice that it can
+   qs.parse('a[8]=1&a[]=2&a[2]=3&a[500]=4')
+       .should.eql({
+		 	a: {2:3, 8:1, 9:2, 500:4}
+     }).obj.a.should.be.an.instanceof(Array);
+
+  // arrays can have named indices!?
+   qs.parse('a[foo]=bar&a[]=2')
+       .should.eql({
+		 	a: { foo: 'bar', 0: 2}
+     }).obj.a.should.be.an.instanceof(Array);
+
+	// no [] or [0], then we have an object, no matter what
+   qs.parse('a[foo]=bar&a[1]=2')
+       .should.eql({
+		 	a: { foo: 'bar', 1: 2}
+     }).obj.a.should.be.a('object');
   }
 };
