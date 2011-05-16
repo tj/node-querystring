@@ -120,8 +120,7 @@ module.exports = {
   },
 
   'test complex': function(){
-
-     // if no arrays are EVER specified, parser will create arrays for you
+    // if no arrays are EVER specified, parser will create arrays for you
     qs.parse('users[name][first]=tj&users[name][first]=tobi')
         .should.eql({
           users: { name: { first: [ 'tj', 'tobi' ] } }
@@ -181,13 +180,13 @@ module.exports = {
   },
 
   'indice types': function() {
-    // numbered indice starting with 0 or [] means we want an array
+     // numbered indice starting with 0 or [] means we want an array
      qs.parse('a[0]=1')
          .should.eql({
         a: [1]
        }).obj.a.should.be.an.instanceof(Array);
 
-    // without [0] or [], means we want an object
+     // without [0] or [], means we want an object
      qs.parse('a[1]=2')
          .should.eql({
         a: { 1: 2 }
