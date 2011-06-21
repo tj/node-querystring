@@ -50,6 +50,9 @@ module.exports = {
         , chs: '250x100'
         , chl: 'Hello|World'
       });
+      
+    qs.parse('[foo]=bar')
+      .should.eql({ foo: 'bar' });
   },
   
   'test nesting': function(){
