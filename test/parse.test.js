@@ -140,8 +140,9 @@ module.exports = {
   'test malformed uri': function(){
     qs.parse('{%:%}').should.eql({ '{%:%}': '' });
     qs.parse('foo=%:%}').should.eql({ 'foo': '%:%}' });
+    qs.parse('foo=%:%}%20').should.eql({ 'foo': '%:%} ' });
   }
-  
+
   // 'test complex': function(){
   //   qs.parse('users[][name][first]=tj&users[foo]=bar')
   //     .should.eql({
