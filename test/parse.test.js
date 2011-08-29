@@ -141,6 +141,10 @@ module.exports = {
     qs.parse('{%:%}').should.eql({ '{%:%}': '' });
     qs.parse('foo=%:%}').should.eql({ 'foo': '%:%}' });
     qs.parse('foo=%:%}%20').should.eql({ 'foo': '%:%} ' });
+  },
+
+  'test unescaping of non-utf8 encoded data': function(){
+    qs.parse('foo=%E4%20bar').should.eql({ 'foo': String.fromCharCode('228') + ' bar' });
   }
 
   // 'test complex': function(){
