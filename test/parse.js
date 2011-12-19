@@ -145,6 +145,12 @@ module.exports = {
     qs.parse({ 'foo[0]': 'bar', 'foo[1]': 'baz' })
       .should.eql({ foo: ['bar', 'baz'] });
 
+    qs.parse({ 'foo[items]': [], foo: { items: ['bar'] } })
+      .should.eql({ foo: { items: ['bar'] } })
+
+    qs.parse({ foo: { items: ['bar'] }, 'foo[items]': [] })
+      .should.eql({ foo: { items: ['bar'] } })
+
     qs.parse({ 'foo[base64]': 'RAWR', 'foo[64base]': 'RAWR' })
       .should.eql({ foo: { base64: 'RAWR', '64base': 'RAWR' } });
 
