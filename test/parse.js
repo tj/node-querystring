@@ -139,6 +139,29 @@ module.exports = {
   'test malformed uri': function(){
     qs.parse('{%:%}').should.eql({ '{%:%}': '' });
     qs.parse('foo=%:%}').should.eql({ 'foo': '%:%}' });
+  },
+
+  'test partially parsed objects': function(){
+    qs.parse({ 'foo[0]': 'bar', 'foo[1]': 'baz' })
+      .should.eql({ foo: ['bar', 'baz'] });
+
+    qs.parse({ 'foo[items]': [], foo: { items: ['bar'] } })
+      .should.eql({ foo: { items: ['bar'] } })
+
+    qs.parse({ foo: { items: ['bar'] }, 'foo[items]': [] })
+      .should.eql({ foo: { items: ['bar'] } })
+
+    qs.parse({ 'foo[base64]': 'RAWR', 'foo[64base]': 'RAWR' })
+      .should.eql({ foo: { base64: 'RAWR', '64base': 'RAWR' } });
+
+    qs.parse({ 'user[name][first]': ['tj', 'TJ'] })
+      .should.eql({ user: { name: { first: ['tj', 'TJ'] } } });
+
+    qs.parse({ 'user[name]': { first: 'tj' }, 'user': { name: { last: 'holowaychuk' } } })
+      .should.eql({ user: { name: { first: 'tj', last: 'holowaychuk' } } });
+
+    qs.parse({ 'user': { name: { last: 'holowaychuk' } }, 'user[name]': { first: 'tj' } })
+      .should.eql({ user: { name: { last: 'holowaychuk', first: 'tj' } } });
   }
   
   // 'test complex': function(){
