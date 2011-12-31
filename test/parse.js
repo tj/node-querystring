@@ -147,6 +147,53 @@ module.exports = {
 
     qs.parse({ 'user[name]': 'tobi', 'user[email][main]': 'tobi@lb.com' })
       .should.eql({ user: { name: 'tobi', email: { main: 'tobi@lb.com' } }});
+  },
+
+  'test parse options.limit': function() {
+    qs.parse('cht=p3&chd=t:60,40&chs=250x100&chl=Hello|World', { limit: 2 })
+      .should.eql({
+        cht: 'p3',
+        chd: 't:60,40'
+      });
+    qs.parse('cht=p3&chd=t:60,40&chs=250x100&chl=Hello|World', { limit: 0 })
+      .should.eql({});
+    qs.parse('cht=p3&chd=t:60,40&chs=250x100&chl=Hello|World', { limit: false })
+      .should.eql({});
+  },
+
+  'test parse options.keys': function() {
+    qs.parse('cht=p3&chd=t:60,40&chs=250x100&chl=Hello|World', 
+      { keys: [ 'chs', 'chl' ] })
+      .should.eql({
+        chs: '250x100',
+        chl: 'Hello|World'
+      });
+    // more fast, no need to change Array to Object
+    qs.parse('cht=p3&chd=t:60,40&chs=250x100&chl=Hello|World', 
+      { keys: { chs: 1, chl: 1} })
+      .should.eql({
+        chs: '250x100',
+        chl: 'Hello|World'
+      });
+    // should return {} when set {} or []
+    qs.parse('cht=p3&chd=t:60,40&chs=250x100&chl=Hello|World', 
+      { keys: {} })
+      .should.eql({});
+    qs.parse('cht=p3&chd=t:60,40&chs=250x100&chl=Hello|World', 
+      { keys: [] })
+      .should.eql({});
+    // should parse all keys when set !keys
+    var falseKeysList = [ false, null, undefined, 0, '' ];
+    for (var i = 0, l = falseKeysList.length; i < l; i++) {
+      var falseKeys = falseKeysList[i];
+      qs.parse('cht=p3&chd=t:60,40&chs=250x100&chl=Hello|World', { keys: falseKeys })
+        .should.eql({
+            cht: 'p3'
+          , chd: 't:60,40'
+          , chs: '250x100'
+          , chl: 'Hello|World'
+        });
+    }
   }
   
   // 'test complex': function(){
