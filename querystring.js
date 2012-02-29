@@ -256,4 +256,4 @@
       if ('=' == c && !brace) return i;
     }
   }
-})(module.exports);
+})(window.querystring = {});
