@@ -4,7 +4,7 @@
  * MIT Licensed
  */
 
-var querystring = function(exports) {
+var querystring = function(exports){
   /**
    * Object#toString() ref for stringify().
    */
@@ -256,4 +256,6 @@ var querystring = function(exports) {
       if ('=' == c && !brace) return i;
     }
   }
+
+  return exports;
 }((typeof module == 'object' && typeof module.exports == 'object') ? module.exports : {});
