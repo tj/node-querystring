@@ -142,27 +142,37 @@ describe('qs.parse()', function(){
   })
 
   describe('when "coerce" is enabled', function(){
+    function parse(str){
+      return qs.parse(str, { coerce: true });
+    };
+
     it('should support booleans', function(){
-      expect(qs.parse('display[user][name]=true')).to.eql({ display: { user: { name: true }}});
-      expect(qs.parse('foo=true')).to.eql({ foo: true });
-      expect(qs.parse('foo=false')).to.eql({ foo: false });
+      expect(parse('display[user][name]=true')).to.eql({ display: { user: { name: true }}});
+      expect(parse('foo=true')).to.eql({ foo: true });
+      expect(parse('foo=false')).to.eql({ foo: false });
     })
 
     it('should support floats', function(){
-      expect(qs.parse('foo=100.55')).to.eql({ foo: 100.55 });
-      expect(qs.parse('foo=1.0')).to.eql({ foo: 1.0 });
-      expect(qs.parse('foo=.5')).to.eql({ foo: .5 });
-      expect(qs.parse('foo=.5xx')).to.eql({ foo: '.5xx' });
+      expect(parse('foo=100.55')).to.eql({ foo: 100.55 });
+      expect(parse('foo=1.0')).to.eql({ foo: 1.0 });
+      expect(parse('foo=.5')).to.eql({ foo: .5 });
+      expect(parse('foo=.5xx')).to.eql({ foo: '.5xx' });
     })
 
     it('should support integers', function(){
-      expect(qs.parse('foo=100')).to.eql({ foo: 100 });
-      expect(qs.parse('foo=0')).to.eql({ foo: 0 });
-      expect(qs.parse('foo=0xff')).to.eql({ foo: '0xff' });
+      expect(parse('foo=100')).to.eql({ foo: 100 });
+      expect(parse('foo=0')).to.eql({ foo: 0 });
+      expect(parse('foo=0xff')).to.eql({ foo: '0xff' });
     })
 
     it('should support null', function(){
-      expect(qs.parse('foo=null')).to.eql({ foo: null });
+      expect(parse('foo=null')).to.eql({ foo: null });
+    })
+  })
+
+  describe('when "coerce" is disabled', function(){
+    it('should not convert values', function(){
+      expect(qs.parse('foo=100')).to.eql({ foo: '100' });
     })
   })
 })
