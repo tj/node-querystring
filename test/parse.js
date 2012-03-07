@@ -114,7 +114,7 @@ describe('qs.parse()', function(){
       .to.eql({ op: { '>=': '[1,2,3]' }});
 
     expect(qs.parse('op[>=]=[1,2,3]&op[=]=[[[[1]]]]'))
-          .to.eql({ op: { '>=': '[1,2,3]', '=': '[[[[1]]]]' }});
+      .to.eql({ op: { '>=': '[1,2,3]', '=': '[[[[1]]]]' }});
   })
 
   it('should support empty values', function(){
@@ -138,6 +138,61 @@ describe('qs.parse()', function(){
       .to.eql({ user: { name: 'tobi' }});
 
     expect(qs.parse({ 'user[name]': 'tobi', 'user[email][main]': 'tobi@lb.com' }))
+      .to.eql({ user: { name: 'tobi', email: { main: 'tobi@lb.com' } }});
+  })
+
+  it('should support custom delimiters', function(){
+    expect(qs.parse('foo.bar=rawr', '.'))
+      .to.eql({ foo: { bar: 'rawr' } });
+
+    expect(qs.parse('foo.bar=rawr&foo.rawr=bar', '.'))
+      .to.eql({ foo: { bar: 'rawr', rawr: 'bar' }});
+
+    expect(qs.parse('foo.bar=rawr&foo.bar=rawk', '.'))
+      .to.eql({ foo: { bar: ['rawr', 'rawk'] }});
+  })
+
+  it('should support mix and match', function() {
+    expect(qs.parse('foo.bar[0][]=rawr', '.'))
+      .to.eql({ foo: { bar: [['rawr']] }});
+
+    expect(qs.parse('foo.bar.fib[hello][world]=rawk', '.'))
+      .to.eql({ foo: { bar: { fib: { hello: { world: 'rawk' } }}}});
+
+    expect(qs.parse('foo[bar].rawr=fubar', '.'))
+      .to.eql({ foo: { bar: { rawr: 'fubar' } }});
+
+    expect(qs.parse('foo[bar].rawk.on=fubar', '.'))
+      .to.eql({ foo: { bar: { rawk: { on: 'fubar' } }}});
+
+    expect(qs.parse('foo[0].bar=rawr&foo[0].boo=rawk&foo[1].bar=bump', '.'))
+      .to.eql({ foo: [ { bar: 'rawr', boo: 'rawk' }, { bar: 'bump' } ]});
+
+    expect(qs.parse('foo[bar].rawk[on].boom=fubar', '.'))
+      .to.eql({ foo: { bar: { rawk: { on: { boom: 'fubar' } }}}});
+  })
+
+  it('should support delimiters in keys', function() {
+    expect(qs.parse('foo[rawk.on]=rawr', '.'))
+      .to.eql({ foo: { 'rawk.on': 'rawr' } });
+
+    expect(qs.parse('foo.bar[boom.shaka].lacka=bump', '.'))
+      .to.eql({ foo: { bar: { 'boom.shaka': { 'lacka': 'bump' } }}});
+  })
+
+  it('should support right-hand side delimiters', function() {
+    expect(qs.parse('foo.bar=boom.shaka.lacka', '.'))
+      .to.eql({ foo: { bar: 'boom.shaka.lacka' }});
+
+    expect(qs.parse('foo[boing]=shakala.kaaa', '.'))
+      .to.eql({ foo: { boing: 'shakala.kaaa' }});
+  })
+
+  it('should support semi-parsed delimited strings', function(){
+    expect(qs.parse({ 'user.name': 'tobi' }, '.'))
+      .to.eql({ user: { name: 'tobi' }});
+
+    expect(qs.parse({ 'user.name': 'tobi', 'user[email].main': 'tobi@lb.com' }, '.'))
       .to.eql({ user: { name: 'tobi', email: { main: 'tobi@lb.com' } }});
   })
 })
