@@ -1,16 +1,17 @@
+<!doctype html>
 <html>
   <head>
+  	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Mocha</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" href="mocha.css" />
-    <script src="jquery.js" type="text/javascript"></script>
-    <script src="expect.js"></script>
+    <link href="mocha.css" rel="stylesheet"  media="screen" />
+    <script src="jquery.js"></script>
     <script src="mocha.js"></script>
     <script>mocha.setup('bdd')</script>
+    <script src="expect.js"></script>
     <script src="qs.js"></script>
     <script src="../parse.js"></script>
     <script src="../stringify.js"></script>
-    <script>onload = mocha.run;</script>
+	<script>window.onload = mocha.run;</script>
   </head>
   <body>
     <div id="mocha"></div>

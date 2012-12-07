@@ -144,4 +144,12 @@ describe('qs.parse()', function(){
     expect(qs.parse({ 'user[name]': 'tobi', 'user[email][main]': 'tobi@lb.com' }))
       .to.eql({ user: { name: 'tobi', email: { main: 'tobi@lb.com' } }});
   })
+
+  it('should support empty values (w/ flag)', function(){
+    expect(qs.parse('user[name]=', {includeEmptyValues: true}))
+      .to.eql({ user: { name: '' }});
+
+    expect(qs.parse('foo[]=1&foo[]=&foo[]=3', {includeEmptyValues: true}))
+      .to.eql({ foo: [1, "", 3]});
+  });
 })
