@@ -20,7 +20,7 @@ function promote(parent, key) {
   return t;
 }
 
-function parse(parts, parent, key, val) {
+function parse(parts, parent, key, val, includeEmptyValues) {
   var part = parts.shift();
   // end
   if (!part) {
@@ -38,7 +38,7 @@ function parse(parts, parent, key, val) {
     var obj = parent[key] = parent[key] || [];
     if (']' == part) {
       if (Array.isArray(obj)) {
-        if ('' != val) obj.push(val);
+        if (includeEmptyValues || '' != val) obj.push(val);
       } else if ('object' == typeof obj) {
         obj[Object.keys(obj).length] = val;
       } else {
@@ -48,11 +48,11 @@ function parse(parts, parent, key, val) {
     } else if (~part.indexOf(']')) {
       part = part.substr(0, part.length - 1);
       if (!isint.test(part) && Array.isArray(obj)) obj = promote(parent, key);
-      parse(parts, obj, part, val);
+      parse(parts, obj, part, val, includeEmptyValues);
       // key
     } else {
       if (!isint.test(part) && Array.isArray(obj)) obj = promote(parent, key);
-      parse(parts, obj, part, val);
+      parse(parts, obj, part, val, includeEmptyValues);
     }
   }
 }
@@ -61,12 +61,12 @@ function parse(parts, parent, key, val) {
  * Merge parent key/val pair.
  */
 
-function merge(parent, key, val){
+function merge(parent, key, val, includeEmptyValues){
   if (~key.indexOf(']')) {
     var parts = key.split('[')
       , len = parts.length
       , last = len - 1;
-    parse(parts, parent, 'base', val);
+    parse(parts, parent, 'base', val, includeEmptyValues);
     // optimize
   } else {
     if (!isint.test(key) && Array.isArray(parent.base)) {
@@ -84,10 +84,10 @@ function merge(parent, key, val){
  * Parse the given obj.
  */
 
-function parseObject(obj){
+function parseObject(obj, includeEmptyValues){
   var ret = { base: {} };
   Object.keys(obj).forEach(function(name){
-    merge(ret, name, obj[name]);
+    merge(ret, name, obj[name], includeEmptyValues);
   });
   return ret.base;
 }
@@ -96,16 +96,10 @@ function parseObject(obj){
  * Parse the given str.
  */
 
-function parseString(str){
+function parseString(str, includeEmptyValues){
   return String(str)
     .split('&')
     .reduce(function(ret, pair){
-      try{
-        pair = decodeURIComponent(pair.replace(/\+/g, ' '));
-      } catch(e) {
-        // ignore
-      }
-
       var eql = pair.indexOf('=')
         , brace = lastBraceInKey(pair)
         , key = pair.substr(0, brace || eql)
@@ -115,7 +109,7 @@ function parseString(str){
       // ?foo
       if ('' == key) key = pair, val = '';
 
-      return merge(ret, key, val);
+      return merge(ret, decode(key), decode(val), includeEmptyValues);
     }, { base: {} }).base;
 }
 
@@ -127,11 +121,12 @@ function parseString(str){
  * @api public
  */
 
-exports.parse = function(str){
+exports.parse = function(str, options){
   if (null == str || '' == str) return {};
+  var includeEmptyValues = options && !!options.includeEmptyValues;
   return 'object' == typeof str
-    ? parseObject(str)
-    : parseString(str);
+    ? parseObject(str, includeEmptyValues)
+    : parseString(str, includeEmptyValues);
 };
 
 /**
@@ -150,7 +145,7 @@ var stringify = exports.stringify = function(obj, prefix) {
   } else if ('string' == typeof obj) {
     return stringifyString(obj, prefix);
   } else {
-    return prefix + '=' + obj;
+    return prefix + '=' + encodeURIComponent(String(obj));
   }
 };
 
@@ -181,7 +176,7 @@ function stringifyArray(arr, prefix) {
   var ret = [];
   if (!prefix) throw new TypeError('stringify expects an object');
   for (var i = 0; i < arr.length; i++) {
-    ret.push(stringify(arr[i], prefix + '['+i+']'));
+    ret.push(stringify(arr[i], prefix + '[' + i + ']'));
   }
   return ret.join('&');
 }
@@ -249,6 +244,22 @@ function lastBraceInKey(str) {
     if (']' == c) brace = false;
     if ('[' == c) brace = true;
     if ('=' == c && !brace) return i;
+  }
+}
+
+/**
+ * Decode `str`.
+ *
+ * @param {String} str
+ * @return {String}
+ * @api private
+ */
+
+function decode(str) {
+  try {
+    return decodeURIComponent(str.replace(/\+/g, ' '));
+  } catch (err) {
+    return str;
   }
 }
 })();

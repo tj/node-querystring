@@ -14,6 +14,9 @@ var qs = require('qs');
 qs.parse('user[name][first]=Tobi&user[email]=tobi@learnboost.com');
 // => { user: { name: { first: 'Tobi' }, email: 'tobi@learnboost.com' } }
 
+qs.parse('task[]=Make&task[]=&task[]=Deploy&count=3', {includeEmptyValues: true});
+// => { task: [ 'Make', '', 'Deploy' ], count: 3 }
+
 qs.stringify({ user: { name: 'Tobi', email: 'tobi@learnboost.com' }})
 // => user[name]=Tobi&user[email]=tobi%40learnboost.com
 ```
@@ -32,7 +35,7 @@ browser:
 
     $ open test/browser/index.html
 
-## License 
+## License
 
 (The MIT License)
 
