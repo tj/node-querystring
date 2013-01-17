@@ -62,7 +62,7 @@ function parse(parts, parent, key, val) {
 
 function merge(parent, key, val){
   if (~key.indexOf(']')) {
-    var parts = key.split('[')
+    var parts = key.split(/[\[\]]/)
       , len = parts.length
       , last = len - 1;
     parse(parts, parent, 'base', val);
