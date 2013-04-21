@@ -6,6 +6,16 @@
 var toString = Object.prototype.toString;
 
 /**
+ * Object.keys utility.
+ */
+
+var objectKeys = Object.keys || function (obj) {
+  var ret = [];
+  for (var key in obj) ret.push(key);
+  return ret;
+}
+
+/**
  * Cache non-integer test regexp.
  */
 
@@ -39,7 +49,7 @@ function parse(parts, parent, key, val) {
       if (Array.isArray(obj)) {
         if ('' != val) obj.push(val);
       } else if ('object' == typeof obj) {
-        obj[Object.keys(obj).length] = val;
+        obj[objectKeys(obj).length] = val;
       } else {
         obj = parent[key] = [parent[key], val];
       }
@@ -85,7 +95,7 @@ function merge(parent, key, val){
 
 function parseObject(obj){
   var ret = { base: {} };
-  Object.keys(obj).forEach(function(name){
+  objectKeys(obj).forEach(function(name){
     merge(ret, name, obj[name]);
   });
   return ret.base;
@@ -191,7 +201,7 @@ function stringifyArray(arr, prefix) {
 
 function stringifyObject(obj, prefix) {
   var ret = []
-    , keys = Object.keys(obj)
+    , keys = objectKeys(obj)
     , key;
 
   for (var i = 0, len = keys.length; i < len; ++i) {
