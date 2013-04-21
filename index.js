@@ -1,9 +1,16 @@
-
 /**
  * Object#toString() ref for stringify().
  */
 
 var toString = Object.prototype.toString;
+
+/**
+ * isArray utility.
+ */
+
+var isArray = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+}
 
 /**
  * Cache non-integer test regexp.
@@ -23,7 +30,7 @@ function parse(parts, parent, key, val) {
   var part = parts.shift();
   // end
   if (!part) {
-    if (Array.isArray(parent[key])) {
+    if (isArray(parent[key])) {
       parent[key].push(val);
     } else if ('object' == typeof parent[key]) {
       parent[key] = val;
@@ -36,7 +43,7 @@ function parse(parts, parent, key, val) {
   } else {
     var obj = parent[key] = parent[key] || [];
     if (']' == part) {
-      if (Array.isArray(obj)) {
+      if (isArray(obj)) {
         if ('' != val) obj.push(val);
       } else if ('object' == typeof obj) {
         obj[Object.keys(obj).length] = val;
@@ -46,11 +53,11 @@ function parse(parts, parent, key, val) {
       // prop
     } else if (~part.indexOf(']')) {
       part = part.substr(0, part.length - 1);
-      if (!isint.test(part) && Array.isArray(obj)) obj = promote(parent, key);
+      if (!isint.test(part) && isArray(obj)) obj = promote(parent, key);
       parse(parts, obj, part, val);
       // key
     } else {
-      if (!isint.test(part) && Array.isArray(obj)) obj = promote(parent, key);
+      if (!isint.test(part) && isArray(obj)) obj = promote(parent, key);
       parse(parts, obj, part, val);
     }
   }
@@ -68,7 +75,7 @@ function merge(parent, key, val){
     parse(parts, parent, 'base', val);
     // optimize
   } else {
-    if (!isint.test(key) && Array.isArray(parent.base)) {
+    if (!isint.test(key) && isArray(parent.base)) {
       var t = {};
       for (var k in parent.base) t[k] = parent.base[k];
       parent.base = t;
@@ -137,7 +144,7 @@ exports.parse = function(str){
  */
 
 var stringify = exports.stringify = function(obj, prefix) {
-  if (Array.isArray(obj)) {
+  if (isArray(obj)) {
     return stringifyArray(obj, prefix);
   } else if ('[object Object]' == toString.call(obj)) {
     return stringifyObject(obj, prefix);
@@ -223,7 +230,7 @@ function set(obj, key, val) {
   var v = obj[key];
   if (undefined === v) {
     obj[key] = val;
-  } else if (Array.isArray(v)) {
+  } else if (isArray(v)) {
     v.push(val);
   } else {
     obj[key] = [v, val];
