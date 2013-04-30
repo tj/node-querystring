@@ -54,7 +54,9 @@ var str_identities = {
   ],
   'numbers': [
     { str: 'limit[0]=1&limit[1]=2&limit[2]=3', obj: { limit: [1, 2, '3'] }},
-    { str: 'limit=1', obj: { limit: 1 }}
+    { str: 'limit=1', obj: { limit: 1 }},
+    { str: "a['111']=1", obj: { a: { '111': 1 } } },
+    { str: "'123'=hello", obj: { '123': "hello" } }
   ],
   'others': [
     { str: 'at=' + encodeURIComponent(date), obj: { at: date } }
