@@ -162,7 +162,7 @@ function compact(obj) {
 
     for (var i in obj) {
       if (hasOwnProperty.call(obj, i)) {
-        ret.push(obj[i]);
+        ret.push(restoreProto(obj[i]));
       }
     }
 
@@ -183,10 +183,7 @@ function compact(obj) {
 
 function restoreProto(obj) {
   if (!Object.create) return obj;
-  if (isArray(obj)) {
-    obj.__proto__ = Object.prototype;
-    return obj;
-  }
+  if (isArray(obj)) return obj;
   if (obj && 'object' != typeof obj) return obj;
 
   for (var key in obj) {
