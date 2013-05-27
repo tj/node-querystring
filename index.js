@@ -183,7 +183,10 @@ function compact(obj) {
 
 function restoreProto(obj) {
   if (!Object.create) return obj;
-  if (isArray(obj)) return obj;
+  if (isArray(obj)) {
+    obj.__proto__ = Object.prototype;
+    return obj;
+  }
   if (obj && 'object' != typeof obj) return obj;
 
   for (var key in obj) {
