@@ -66,7 +66,7 @@ var objectKeys = Object.keys || function(obj) {
 var forEach = typeof Array.prototype.forEach === 'function'
   ? function(arr, fn) { return arr.forEach(fn); }
   : function(arr, fn) {
-      for (var i = 0; i < arr.length; i++) fn(arr[i]);
+      for (var i = 0; i < arr.length; i++) fn(arr[i], i, arr);
     };
 
 /**
@@ -76,7 +76,12 @@ var forEach = typeof Array.prototype.forEach === 'function'
 var reduce = function(arr, fn, initial) {
   if (typeof arr.reduce === 'function') return arr.reduce(fn, initial);
   var res = initial;
-  for (var i = 0; i < arr.length; i++) res = fn(res, arr[i]);
+  var i = 0;
+  if (!res) {
+    res = arr[0];
+    i = 1;
+  }
+  for (i; i < arr.length; i++) res = fn(res, arr[i], i, arr);
   return res;
 };
 
