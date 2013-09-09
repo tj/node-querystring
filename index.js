@@ -95,6 +95,7 @@ function createObject() {
  */
 
 var isint = /^[0-9]+$/;
+var isnumstr = /^['"][0-9]+['"]$/;
 
 function promote(parent, key) {
   if (parent[key].length == 0) return parent[key] = createObject();
@@ -110,6 +111,9 @@ function promote(parent, key) {
 
 function parse(parts, parent, key, val) {
   var part = parts.shift();
+
+  key = isnumstr.test(key) ? key.replace(/['"]/g, '') : key;
+
   // end
   if (!part) {
     if (isArray(parent[key])) {
@@ -329,15 +333,18 @@ function stringifyArray(arr, prefix) {
 function stringifyObject(obj, prefix) {
   var ret = []
     , keys = objectKeys(obj)
-    , key;
+    , key, val;
 
   for (var i = 0, len = keys.length; i < len; ++i) {
     key = keys[i];
+    val = obj[key];
+
     if ('' == key) continue;
-    if (null == obj[key]) {
+    if (null == val) {
       ret.push(encodeURIComponent(key) + '=');
     } else {
-      ret.push(stringify(obj[key], prefix
+      key = isint.test(key) ? "'" + key + "'" : key;
+      ret.push(stringify(val, prefix
         ? prefix + '[' + encodeURIComponent(key) + ']'
         : encodeURIComponent(key)));
     }
@@ -358,6 +365,7 @@ function stringifyObject(obj, prefix) {
  */
 
 function set(obj, key, val) {
+  key = isnumstr.test(key) ? key.replace(/['"]/g, '') : key;
   var v = obj[key];
   if (undefined === v) {
     obj[key] = val;
