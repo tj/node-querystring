@@ -46,7 +46,9 @@ var str_identities = {
     { str: 'x[y][0][z]=1&x[y][0][v][w]=2', obj: {'x' : {'y' : [{'z' : '1', 'v' : {'w' : '2'}}]}}},
     { str: 'x[y][0][z]=1&x[y][1][z]=2', obj: {'x' : {'y' : [{'z' : '1'}, {'z' : '2'}]}}},
     { str: 'x[y][0][z]=1&x[y][0][w]=a&x[y][1][z]=2&x[y][1][w]=3', obj: {'x' : {'y' : [{'z' : '1', 'w' : 'a'}, {'z' : '2', 'w' : '3'}]}}},
-    { str: 'user[name][first]=tj&user[name][last]=holowaychuk', obj: { user: { name: { first: 'tj', last: 'holowaychuk' }}}}
+    { str: 'user[name][first]=tj&user[name][last]=holowaychuk', obj: { user: { name: { first: 'tj', last: 'holowaychuk' }}}},
+    { str: 'user[name][first]=&user[name][last]=holowaychuk', obj: { user: { name: { first: '', last: 'holowaychuk' }}}},
+    { str: 'user[name][first]=&user[name][last]=holowaychuk', obj: { user: { name: { first: null, last: 'holowaychuk' }}}}
   ],
   'errors': [
     { obj: 'foo=bar',     message: 'stringify expects an object' },
