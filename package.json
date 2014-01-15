@@ -7,6 +7,10 @@
     "type" : "git",
     "url" : "git://github.com/visionmedia/node-querystring.git"
   },
+  "license": {
+    "type" : "MIT",
+    "url" : "https://github.com/visionmedia/node-querystring/raw/master/LICENSE"
+  },
   "devDependencies": {
       "mocha": "*"
     , "expect.js": "*"
