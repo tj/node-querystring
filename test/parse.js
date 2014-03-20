@@ -100,13 +100,14 @@ describe('qs.parse()', function(){
   })
 
   it('should support arrays with indexes', function(){
-    expect(qs.parse('foo[0]=bar&foo[1]=baz')).to.eql({ foo: ['bar', 'baz'] });
-    expect(qs.parse('foo[1]=bar&foo[0]=baz')).to.eql({ foo: ['baz', 'bar'] });
+    expect(qs.parse('foo[0]=bar&foo[1]=baz')).to.eql({ foo: {0:'bar', 1:'baz'} });
+    expect(qs.parse('foo[1]=bar&foo[0]=baz')).to.eql({ foo: {0:'baz', 1:'bar'} });
+    expect(qs.parse('foo[1]=bar&foo[2]=baz')).to.eql({ foo: {1: 'bar', 2: 'baz'}});
     expect(qs.parse('foo[base64]=RAWR')).to.eql({ foo: { base64: 'RAWR' }});
     expect(qs.parse('foo[64base]=RAWR')).to.eql({ foo: { '64base': 'RAWR' }});
   })
 
-  it('should expand to an array when dupliate keys are present', function(){
+  it('should expand to an array when duplicate keys are present', function(){
     expect(qs.parse('items=bar&items=baz&items=raz'))
       .to.eql({ items: ['bar', 'baz', 'raz'] });
   })
@@ -155,9 +156,15 @@ describe('qs.parse()', function(){
   })
 
   it('should not create big arrays of null objects', function(){
-    var q = qs.parse('a[999999999]=1&a[2]=2');
+    var q = qs.parse('a[]=1&a[999999999]=2');
     expect(q['a'].length).to.eql(2);
-    expect(q).to.eql({ a: ['2', '1'] });
+    expect(q).to.eql({ a: ['1', '2'] });
+  })
+
+  it('should create an object from numeric keys', function(){
+    var q = qs.parse('a[999]=1&a[5]=2');
+    expect(q['a']).to.be.a(Object);
+    expect(q).to.eql({ a: {5:'2', 999:'1'} });
   })
   
   it('should not be able to override prototypes', function(){
