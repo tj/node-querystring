@@ -86,10 +86,10 @@ function promote(parent, key) {
 
 function parse(parts, parent, key, val) {
   var part = parts.shift();
-  
+
   // illegal
-  if (Object.getOwnPropertyDescriptor(Object.prototype, key)) return;
-  
+  if (hasOwnProperty.call(Object.prototype, key)) return;
+
   // end
   if (!part) {
     if (isArray(parent[key])) {
@@ -319,7 +319,7 @@ function stringifyObject(obj, prefix) {
 
 function set(obj, key, val) {
   var v = obj[key];
-  if (Object.getOwnPropertyDescriptor(Object.prototype, key)) return;
+  if (hasOwnProperty.call(Object.prototype, key)) return;
   if (undefined === v) {
     obj[key] = val;
   } else if (isArray(v)) {
