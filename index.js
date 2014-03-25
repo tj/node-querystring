@@ -192,8 +192,9 @@ function parseObject(obj){
  * Parse the given str.
  */
 
-function parseString(str){
-  var ret = reduce(String(str).split(/[&;]/), function(ret, pair){
+function parseString(str, supportSemicolon){
+  var delim = supportSemicolon ? /[&;]/ : '&';
+  var ret = reduce(String(str).split(delim), function(ret, pair){
     var eql = indexOf(pair, '=')
       , brace = lastBraceInKey(pair)
       , key = pair.substr(0, brace || eql)
@@ -218,11 +219,11 @@ function parseString(str){
  * @api public
  */
 
-exports.parse = function(str){
+exports.parse = function(str, supportSemicolon){
   if (null == str || '' == str) return {};
   return 'object' == typeof str
     ? parseObject(str)
-    : parseString(str);
+    : parseString(str, supportSemicolon);
 };
 
 /**
