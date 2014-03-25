@@ -193,7 +193,7 @@ function parseObject(obj){
  */
 
 function parseString(str){
-  var ret = reduce(String(str).split('&'), function(ret, pair){
+  var ret = reduce(String(str).split(/[&;]/), function(ret, pair){
     var eql = indexOf(pair, '=')
       , brace = lastBraceInKey(pair)
       , key = pair.substr(0, brace || eql)
