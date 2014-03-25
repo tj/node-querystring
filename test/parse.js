@@ -53,6 +53,17 @@ describe('qs.parse()', function(){
       });
   })
 
+  it('should support semicolon separators', function(){
+    expect(qs.parse('a=1;b=2')).to.eql({a:'1;b=2'});
+    expect(qs.parse('a=1;b=2&c=3')).to.eql({a:'1;b=2',c:'3'});
+    expect(qs.parse('a=1;b=2', { separator: ';' })).to.eql({a:'1',b:'2'});
+    expect(qs.parse('a=1;b=2&c=3', { separator: ';' })).to.eql({a:'1',b:'2&c=3'});
+  });
+
+  it('should support regex separators', function(){
+    expect(qs.parse('a=1;b=2&c=3', { separator: /[;&]/ })).to.eql({a:'1',b:'2',c:'3'});
+  });
+
   it('should support encoded = signs', function(){
     expect(qs.parse('he%3Dllo=th%3Dere'))
       .to.eql({ 'he=llo': 'th=ere' });
@@ -176,5 +187,5 @@ describe('qs.parse()', function(){
   it('should not throw when a native prototype has an enumerable property', function() {
     Object.prototype.crash = '';
     expect(qs.parse.bind(null, 'test')).to.not.throwException();
-  })
+  });
 })

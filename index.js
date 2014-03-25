@@ -192,8 +192,8 @@ function parseObject(obj){
  * Parse the given str.
  */
 
-function parseString(str){
-  var ret = reduce(String(str).split('&'), function(ret, pair){
+function parseString(str, options){
+  var ret = reduce(String(str).split(options.separator), function(ret, pair){
     var eql = indexOf(pair, '=')
       , brace = lastBraceInKey(pair)
       , key = pair.substr(0, brace || eql)
@@ -218,11 +218,13 @@ function parseString(str){
  * @api public
  */
 
-exports.parse = function(str){
+exports.parse = function(str, options){
   if (null == str || '' == str) return {};
+  options = options || {};
+  options.separator = options.separator || '&';
   return 'object' == typeof str
     ? parseObject(str)
-    : parseString(str);
+    : parseString(str, options);
 };
 
 /**
