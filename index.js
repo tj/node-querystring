@@ -219,11 +219,12 @@ function parseString(str, supportSemicolon){
  * @api public
  */
 
-exports.parse = function(str, supportSemicolon){
+exports.parse = function(str, options){
   if (null == str || '' == str) return {};
+  options = options || {};
   return 'object' == typeof str
     ? parseObject(str)
-    : parseString(str, supportSemicolon);
+    : parseString(str, options.supportSemicolon);
 };
 
 /**

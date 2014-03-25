@@ -56,8 +56,8 @@ describe('qs.parse()', function(){
   it('should support semicolon separators', function(){
     expect(qs.parse('a=1;b=2')).to.eql({a:'1;b=2'});
     expect(qs.parse('a=1;b=2&c=3')).to.eql({a:'1;b=2',c:'3'});
-    expect(qs.parse('a=1;b=2', true)).to.eql({a:'1',b:'2'});
-    expect(qs.parse('a=1;b=2&c=3', true)).to.eql({a:'1',b:'2',c:'3'});
+    expect(qs.parse('a=1;b=2', { supportSemicolon: true })).to.eql({a:'1',b:'2'});
+    expect(qs.parse('a=1;b=2&c=3', { supportSemicolon: true })).to.eql({a:'1',b:'2',c:'3'});
   });
 
   it('should support encoded = signs', function(){
