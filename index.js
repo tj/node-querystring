@@ -17,6 +17,9 @@ var hasOwnProperty = Object.prototype.hasOwnProperty;
 var indexOf = typeof Array.prototype.indexOf === 'function'
   ? function(arr, el) { return arr.indexOf(el); }
   : function(arr, el) {
+      if (!isArray(arr)) {
+        arr = arr.split('');
+      }
       for (var i = 0; i < arr.length; i++) {
         if (arr[i] === el) return i;
       }
@@ -341,6 +344,9 @@ function lastBraceInKey(str) {
   var len = str.length
     , brace
     , c;
+  if (!isArray(str)) {
+    str = str.split('');
+  }
   for (var i = 0; i < len; ++i) {
     c = str[i];
     if (']' == c) brace = false;
