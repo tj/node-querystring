@@ -103,12 +103,21 @@ require.register("querystring", function(module, exports, require){
 var toString = Object.prototype.toString;
 
 /**
+ * Object#hasOwnProperty ref
+ */
+
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+/**
  * Array#indexOf shim.
  */
 
 var indexOf = typeof Array.prototype.indexOf === 'function'
   ? function(arr, el) { return arr.indexOf(el); }
   : function(arr, el) {
+      if (!isArray(arr)) {
+        arr = arr.split('');
+      }
       for (var i = 0; i < arr.length; i++) {
         if (arr[i] === el) return i;
       }
@@ -129,7 +138,11 @@ var isArray = Array.isArray || function(arr) {
 
 var objectKeys = Object.keys || function(obj) {
   var ret = [];
-  for (var key in obj) ret.push(key);
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      ret.push(key);
+    }
+  }
   return ret;
 };
 
@@ -161,15 +174,23 @@ var reduce = function(arr, fn, initial) {
 var isint = /^[0-9]+$/;
 
 function promote(parent, key) {
-  if (parent[key].length == 0) return parent[key] = {};
+  if (parent[key].length == 0) return parent[key] = {}
   var t = {};
-  for (var i in parent[key]) t[i] = parent[key][i];
+  for (var i in parent[key]) {
+    if (hasOwnProperty.call(parent[key], i)) {
+      t[i] = parent[key][i];
+    }
+  }
   parent[key] = t;
   return t;
 }
 
 function parse(parts, parent, key, val) {
   var part = parts.shift();
+
+  // illegal
+  if (hasOwnProperty.call(Object.prototype, key)) return;
+
   // end
   if (!part) {
     if (isArray(parent[key])) {
@@ -229,15 +250,43 @@ function merge(parent, key, val){
 }
 
 /**
+ * Compact sparse arrays.
+ */
+
+function compact(obj) {
+  if ('object' != typeof obj) return obj;
+
+  if (isArray(obj)) {
+    var ret = [];
+
+    for (var i in obj) {
+      if (hasOwnProperty.call(obj, i)) {
+        ret.push(obj[i]);
+      }
+    }
+
+    return ret;
+  }
+
+  for (var key in obj) {
+    obj[key] = compact(obj[key]);
+  }
+
+  return obj;
+}
+
+/**
  * Parse the given obj.
  */
 
 function parseObject(obj){
   var ret = { base: {} };
+
   forEach(objectKeys(obj), function(name){
     merge(ret, name, obj[name]);
   });
-  return ret.base;
+
+  return compact(ret.base);
 }
 
 /**
@@ -245,7 +294,7 @@ function parseObject(obj){
  */
 
 function parseString(str){
-  return reduce(String(str).split('&'), function(ret, pair){
+  var ret = reduce(String(str).split('&'), function(ret, pair){
     var eql = indexOf(pair, '=')
       , brace = lastBraceInKey(pair)
       , key = pair.substr(0, brace || eql)
@@ -258,6 +307,8 @@ function parseString(str){
 
     return merge(ret, decode(key), decode(val));
   }, { base: {} }).base;
+
+  return compact(ret);
 }
 
 /**
@@ -343,6 +394,7 @@ function stringifyObject(obj, prefix) {
 
   for (var i = 0, len = keys.length; i < len; ++i) {
     key = keys[i];
+    if ('' == key) continue;
     if (null == obj[key]) {
       ret.push(encodeURIComponent(key) + '=');
     } else {
@@ -368,6 +420,7 @@ function stringifyObject(obj, prefix) {
 
 function set(obj, key, val) {
   var v = obj[key];
+  if (hasOwnProperty.call(Object.prototype, key)) return;
   if (undefined === v) {
     obj[key] = val;
   } else if (isArray(v)) {
@@ -389,6 +442,9 @@ function lastBraceInKey(str) {
   var len = str.length
     , brace
     , c;
+  if (!isArray(str)) {
+    str = str.split('');
+  }
   for (var i = 0; i < len; ++i) {
     c = str[i];
     if (']' == c) brace = false;

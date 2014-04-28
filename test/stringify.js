@@ -237,4 +237,3 @@ describe('qs.stringify', function(){
 	   });	   
 	});
 });
-
