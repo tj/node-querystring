@@ -231,10 +231,9 @@ describe('qs.stringify', function(){
   describe('others', function(){
      it('should work with a date', function() {
         var date = new Date(0);
-        var str =  'at=' + encodeURIComponent(date);
+        var str =  'at=' + encodeURIComponent(date)
         var obj =  { at: date };
         expect(qs.stringify(obj)).to.eql(str); 
      });     
   });
 });
-
