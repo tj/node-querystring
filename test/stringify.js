@@ -43,6 +43,10 @@ describe('qs.stringify', function(){
 		it('should strigify two empty values to not undefined', function() {
 		  expect(qs.stringify({ foo: 'bar', baz: '', raz: '' })).to.eql('foo=bar&baz=&raz='); 
 		});
+
+    it('should stringify with the given separator', function () {
+      expect(qs.stringify({ foo: 'bar', baz: 'raz', raz: ';' }, null, ';')).to.eql('foo=bar;baz=raz;raz=%3B');
+    });
   });
   
   describe('escaping', function(){
@@ -151,7 +155,6 @@ describe('qs.stringify', function(){
 			var obj =  {'x' : {'y' : [{'z' : '1', 'w' : '2'}]}};
 			expect(qs.stringify(obj)).to.eql(str); 
 		});
-		
 		
 		it('should work for object, array, object nesting', function(){
      var str = 'x[y][0][v][w]=1';

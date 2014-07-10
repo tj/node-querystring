@@ -235,11 +235,11 @@ exports.parse = function(str, options){
  * @api public
  */
 
-var stringify = exports.stringify = function(obj, prefix) {
+var stringify = exports.stringify = function(obj, prefix, separator) {
   if (isArray(obj)) {
-    return stringifyArray(obj, prefix);
+    return stringifyArray(obj, prefix, separator);
   } else if ('[object Object]' == toString.call(obj)) {
-    return stringifyObject(obj, prefix);
+    return stringifyObject(obj, prefix, separator);
   } else if ('string' == typeof obj) {
     return stringifyString(obj, prefix);
   } else {
@@ -270,13 +270,13 @@ function stringifyString(str, prefix) {
  * @api private
  */
 
-function stringifyArray(arr, prefix) {
+function stringifyArray(arr, prefix, separator) {
   var ret = [];
   if (!prefix) throw new TypeError('stringify expects an object');
   for (var i = 0; i < arr.length; i++) {
     ret.push(stringify(arr[i], prefix + '[' + i + ']'));
   }
-  return ret.join('&');
+  return ret.join(separator || '&');
 }
 
 /**
@@ -288,7 +288,7 @@ function stringifyArray(arr, prefix) {
  * @api private
  */
 
-function stringifyObject(obj, prefix) {
+function stringifyObject(obj, prefix, separator) {
   var ret = []
     , keys = objectKeys(obj)
     , key;
@@ -305,7 +305,7 @@ function stringifyObject(obj, prefix) {
     }
   }
 
-  return ret.join('&');
+  return ret.join(separator || '&');
 }
 
 /**
