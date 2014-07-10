@@ -235,15 +235,21 @@ exports.parse = function(str, options){
  * @api public
  */
 
-var stringify = exports.stringify = function(obj, prefix, separator) {
+var stringify = exports.stringify = function(obj, options) {
+  if ('string' === typeof options) {
+    options = {prefix: options};
+  }
+
+  options || (options = {});
+
   if (isArray(obj)) {
-    return stringifyArray(obj, prefix, separator);
+    return stringifyArray(obj, options);
   } else if ('[object Object]' == toString.call(obj)) {
-    return stringifyObject(obj, prefix, separator);
+    return stringifyObject(obj, options);
   } else if ('string' == typeof obj) {
-    return stringifyString(obj, prefix);
+    return stringifyString(obj, options.prefix);
   } else {
-    return prefix + '=' + encodeURIComponent(String(obj));
+    return options.prefix + '=' + encodeURIComponent(String(obj));
   }
 };
 
@@ -270,13 +276,16 @@ function stringifyString(str, prefix) {
  * @api private
  */
 
-function stringifyArray(arr, prefix, separator) {
+function stringifyArray(arr, options) {
   var ret = [];
-  if (!prefix) throw new TypeError('stringify expects an object');
+  if (!options.prefix) throw new TypeError('stringify expects an object');
   for (var i = 0; i < arr.length; i++) {
-    ret.push(stringify(arr[i], prefix + '[' + i + ']'));
+    ret.push(stringify(arr[i], {
+      prefix: options.prefix + '[' + i + ']',
+      separator: options.separator
+    }));
   }
-  return ret.join(separator || '&');
+  return ret.join(options.separator || '&');
 }
 
 /**
@@ -288,7 +297,7 @@ function stringifyArray(arr, prefix, separator) {
  * @api private
  */
 
-function stringifyObject(obj, prefix, separator) {
+function stringifyObject(obj, options) {
   var ret = []
     , keys = objectKeys(obj)
     , key;
@@ -299,13 +308,16 @@ function stringifyObject(obj, prefix, separator) {
     if (null == obj[key]) {
       ret.push(encodeURIComponent(key) + '=');
     } else {
-      ret.push(stringify(obj[key], prefix
-        ? prefix + '[' + encodeURIComponent(key) + ']'
-        : encodeURIComponent(key)));
+      ret.push(stringify(obj[key], {
+        prefix: options.prefix
+        ? options.prefix + '[' + encodeURIComponent(key) + ']'
+        : encodeURIComponent(key),
+        separator: options.separator
+      }));
     }
   }
 
-  return ret.join(separator || '&');
+  return ret.join(options.separator || '&');
 }
 
 /**

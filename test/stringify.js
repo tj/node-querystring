@@ -45,7 +45,7 @@ describe('qs.stringify', function(){
 		});
 
     it('should stringify with the given separator', function () {
-      expect(qs.stringify({ foo: 'bar', baz: 'raz', raz: ';' }, null, ';')).to.eql('foo=bar;baz=raz;raz=%3B');
+      expect(qs.stringify({ foo: 'bar', baz: 'raz', raz: ';' }, {prefix: 't', separator: ';'})).to.eql('t[foo]=bar;t[baz]=raz;t[raz]=%3B');
     });
   });
   
@@ -184,6 +184,12 @@ describe('qs.stringify', function(){
      var str = 'user[name][first]=tj&user[name][last]=holowaychuk';
      var obj =  { user: { name: { first: 'tj', last: 'holowaychuk' }}};
      expect(qs.stringify(obj)).to.eql(str); 
+    });
+
+    it('should work with an optional separator', function(){
+     var str = 'user[name][first]=onur;user[name][last]=gunduz';
+     var obj =  { user: { name: { first: 'onur', last: 'gunduz' }}};
+     expect(qs.stringify(obj, {separator: ';' })).to.eql(str); 
     });
 	});
 	
