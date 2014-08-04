@@ -170,6 +170,13 @@ describe('qs.parse()', function(){
     expect(q['a'].length).to.eql(2);
     expect(q).to.eql({ a: ['2', '1'] });
   })
+
+  it('should not create big nesting arrays of null objects', function () {
+    var q = qs.parse('a[0][999999999]=1');
+    console.log(q.a[0]);
+    expect(q['a'].length).to.eql(1);
+    expect(q['a'][0]).to.eql(['1']);
+  })
   
   it('should not be able to override prototypes', function(){
     var obj = qs.parse('toString=bad&bad[toString]=bad&constructor=bad');
