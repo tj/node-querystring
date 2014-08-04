@@ -1,3 +1,8 @@
+# THIS REPOSITORY IS NOW DEPRECATED
+
+`qs@1.0.0+` is now maintained by the awesome [hapijs team](https://github.com/hapijs) at [hapijs/qs](https://github.com/hapijs/qs). 
+Please direct any new issues and concerns in that repository!
+
 # node-querystring [![Build Status](https://travis-ci.org/visionmedia/node-querystring.png?branch=master)](https://travis-ci.org/visionmedia/node-querystring)
 
   query string parser for node and the browser supporting nesting, as it was removed from `0.3.x`, so this library provides the previous and commonly desired behaviour (and twice as fast). Used by [express](http://expressjs.com), [connect](http://senchalabs.github.com/connect) and others.
