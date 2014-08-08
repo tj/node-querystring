@@ -43,6 +43,10 @@ describe('qs.stringify', function(){
 		it('should strigify two empty values to not undefined', function() {
 		  expect(qs.stringify({ foo: 'bar', baz: '', raz: '' })).to.eql('foo=bar&baz=&raz='); 
 		});
+
+    it('should stringify with the given separator', function () {
+      expect(qs.stringify({ foo: 'bar', baz: 'raz', raz: ';' }, {prefix: 't', separator: ';'})).to.eql('t[foo]=bar;t[baz]=raz;t[raz]=%3B');
+    });
   });
   
   describe('escaping', function(){
@@ -152,7 +156,6 @@ describe('qs.stringify', function(){
 			expect(qs.stringify(obj)).to.eql(str); 
 		});
 		
-		
 		it('should work for object, array, object nesting', function(){
      var str = 'x[y][0][v][w]=1';
      var obj =  {'x' : {'y' : [{'v' : {'w' : '1'}}]}};
@@ -181,6 +184,12 @@ describe('qs.stringify', function(){
      var str = 'user[name][first]=tj&user[name][last]=holowaychuk';
      var obj =  { user: { name: { first: 'tj', last: 'holowaychuk' }}};
      expect(qs.stringify(obj)).to.eql(str); 
+    });
+
+    it('should work with an optional separator', function(){
+     var str = 'user[name][first]=onur;user[name][last]=gunduz';
+     var obj =  { user: { name: { first: 'onur', last: 'gunduz' }}};
+     expect(qs.stringify(obj, {separator: ';' })).to.eql(str); 
     });
 	});
 	
