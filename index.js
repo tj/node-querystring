@@ -103,7 +103,7 @@ function parse(parts, parent, key, val) {
     }
     // array
   } else {
-    var obj = parent[key] = parent[key] || [];
+    var obj = parent[key] = parent[key] || ((part == ']') ? [] : {});
     if (']' == part) {
       if (isArray(obj)) {
         if ('' != val) obj.push(val);
