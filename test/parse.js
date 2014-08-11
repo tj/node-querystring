@@ -116,6 +116,10 @@ describe('qs.parse()', function(){
     expect(qs.parse('foo[base64]=RAWR')).to.eql({ foo: { base64: 'RAWR' }});
     expect(qs.parse('foo[64base]=RAWR')).to.eql({ foo: { '64base': 'RAWR' }});
   })
+	
+  it('should support toString() with an array of objects', function(){
+	    expect(qs.parse('foo[0][bar]=baz&foo[1][bat]=boo').foo.toString()).to.eql('[object Object],[object Object]');
+  })	
 
   it('should expand to an array when dupliate keys are present', function(){
     expect(qs.parse('items=bar&items=baz&items=raz'))

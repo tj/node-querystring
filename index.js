@@ -160,7 +160,7 @@ function compact(obj) {
 
     for (var i in obj) {
       if (hasOwnProperty.call(obj, i)) {
-        ret.push(obj[i]);
+        ret.push(restoreProto(obj[i]));
       }
     }
 
